@@ -1,128 +1,111 @@
-<div>
-    <!-- Hero Section (Sección de Bienvenida Oscura) -->
-    <div class="relative bg-brand-darker overflow-hidden bg-grid-pattern border-b border-white/5">
-        <!-- Resplandores de fondo -->
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-brand-purple/20 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-brand-cyan/20 rounded-full blur-3xl"></div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                
-                <!-- Texto Izquierda -->
-                <div>
-                    <span class="inline-block py-1 px-3 rounded-full bg-white/5 border border-white/10 text-brand-cyan text-xs font-semibold mb-6">
-                        ✨ Sublimación de alta definición
-                    </span>
-                    <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-tight mb-6">
-                        Personaliza <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-purple to-brand-cyan">lo que</span> imaginas con colores que no se borran.
-                    </h1>
-                    <p class="text-lg text-gray-400 mb-8 max-w-lg">
-                        Tu diseño alcanza de un clip. Tazas, franelas, gorras y más con la mejor calidad de Punta de Mata.
-                    </p>
-
-                    <!-- Barra de Búsqueda -->
-                    <div class="flex items-center bg-white/5 border border-white/10 rounded-xl p-2 max-w-lg backdrop-blur-sm">
-                        <svg class="w-5 h-5 text-gray-400 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <input type="text" placeholder="Busca tazas, franelas, gorras..." class="bg-transparent border-none text-white w-full px-3 focus:outline-none placeholder-gray-500">
-                        <button class="bg-brand-cyan hover:bg-cyan-500 text-brand-darker font-bold px-6 py-2 rounded-lg transition">Buscar</button>
-                    </div>
-                </div>
-
-                <!-- Imágenes Derecha (Mosaico) -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-4">
-                        <div class="bg-gray-800 rounded-2xl h-64 overflow-hidden relative group">
-                            <img src="https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Taza">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                                <p class="text-white font-semibold">Tazas Mágicas</p>
-                            </div>
-                        </div>
-                        <div class="bg-gray-800 rounded-2xl h-48 overflow-hidden relative group">
-                            <img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Gorra">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                                <p class="text-white font-semibold">Gorras</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-4 pt-12">
-                        <div class="bg-gray-800 rounded-2xl h-48 overflow-hidden relative group">
-                            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Franela">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                                <p class="text-white font-semibold">Franelas</p>
-                            </div>
-                        </div>
-                        <div class="bg-gray-800 rounded-2xl h-64 overflow-hidden relative group border border-brand-cyan/30">
-                            <img src="https://images.unsplash.com/photo-1577937927133-66ef06acdf18?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Taza Personalizada">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                                <p class="text-white font-semibold">Diseños Únicos</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="max-w-7xl mx-auto px-4 py-12 min-h-screen">
+    
+    {{-- Header del Catálogo --}}
+    <div class="mb-10 text-center">
+        <h1 class="text-4xl md:text-5xl font-black text-white mb-4">Nuestro Catálogo</h1>
+        <p class="text-gray-400 mb-8 max-w-xl mx-auto">Descubre todos nuestros productos y personalízalos a tu gusto.</p>
+        
+        {{-- Buscador --}}
+        <div class="relative max-w-xl mx-auto z-50">
+            <div class="flex items-center bg-white/5 border border-white/10 rounded-xl p-2 backdrop-blur-sm focus-within:border-brand-cyan focus-within:ring-1 focus-within:ring-brand-cyan transition">
+                <svg class="w-5 h-5 text-gray-400 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Busca tazas, franelas, gorras..." class="bg-transparent border-none text-white w-full px-3 focus:outline-none">
+                @if($search)
+                    <button wire:click="$set('search', '')" class="text-gray-400 hover:text-white px-2 mr-2">✕</button>
+                @endif
             </div>
-        </div>
-    </div>
-
-    <!-- Catálogo de Productos -->
-    <div class="max-w-7xl mx-auto px-4 py-20">
-        <div class="flex justify-between items-end mb-10 border-b border-white/10 pb-4">
-            <div>
-                <h2 class="text-3xl font-bold text-white mb-2">Nuestro Catálogo</h2>
-                <p class="text-gray-400">Elige tu producto y personalízalo a tu gusto.</p>
-            </div>
-            @if($tasaBcv > 0)
-                <div class="text-sm text-gray-400 bg-white/5 border border-white/10 px-4 py-2 rounded-lg">
-                    Tasa BCV: <span class="font-bold text-brand-cyan">{{ number_format($tasaBcv, 2) }} Bs/$</span>
+            
+            {{-- Autocompletado --}}
+            @if($search)
+                <div class="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-[100] text-left">
+                    @forelse($quickResults as $result)
+                        <a href="{{ route('product.detail', $result->id) }}" class="flex items-center p-3 hover:bg-white/5 border-b border-white/5 last:border-0">
+                            <div class="w-10 h-10 rounded-lg bg-gray-800 overflow-hidden mr-3">
+                                @if($result->image_path)<img src="{{ asset('storage/' . $result->image_path) }}" class="w-full h-full object-cover">@endif
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-white">{{ $result->name }}</p>
+                                <p class="text-xs text-gray-500">{{ $result->category->name }}</p>
+                            </div>
+                            <p class="text-sm font-bold text-brand-cyan">${{ number_format($result->price, 2) }}</p>
+                        </a>
+                    @empty
+                        <div class="p-4 text-center text-gray-400 text-sm">No hay resultados para "{{ $search }}"</div>
+                    @endforelse
                 </div>
             @endif
         </div>
+        
+        @if($tasaBcv > 0)
+            <div class="mt-6 inline-block text-sm text-gray-400 bg-white/5 border border-white/10 px-4 py-2 rounded-lg">
+                Tasa BCV: <span class="font-bold text-brand-cyan">{{ number_format($tasaBcv, 2) }} Bs/$</span>
+            </div>
+        @endif
+    </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            @foreach($productos as $producto)
-                <!-- ✅ TARJETA ENVUELTA EN UN ENLACE AL DETALLE -->
-                <a href="{{ route('product.detail', $producto->id) }}" class="bg-white/5 border border-white/10 rounded-2xl shadow-lg hover:border-brand-cyan/50 transition duration-300 overflow-hidden flex flex-col group cursor-pointer">
-                    <!-- Imagen -->
-                    <div class="h-56 w-full bg-gray-800 relative overflow-hidden">
-                        @if($producto->image_path)
-                            <img src="{{ asset('storage/' . $producto->image_path) }}" alt="{{ $producto->name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                        @else
-                            <div class="flex items-center justify-center h-full text-gray-500">Sin imagen</div>
-                        @endif
-                        
-                        <span class="absolute top-3 right-3 bg-brand-dark/80 backdrop-blur text-brand-cyan text-xs font-bold px-3 py-1 rounded-full border border-white/10">
-                            {{ $producto->category->name }}
-                        </span>
-                    </div>
+    {{-- Píldoras de Categorías --}}
+    <div class="flex items-center justify-center flex-wrap gap-2 mb-10 overflow-x-auto no-scrollbar py-2">
+        <button wire:click="filterByCategory(null)" 
+                class="px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap {{ $selectedCategory === null ? 'bg-gradient-to-r from-brand-purple to-brand-cyan text-white shadow-lg' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white' }}">
+            Todos
+        </button>
+        @foreach($categorias as $cat)
+            <button wire:click="filterByCategory({{ $cat->id }})" 
+                    class="px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap {{ $selectedCategory == $cat->id ? 'bg-gradient-to-r from-brand-purple to-brand-cyan text-white shadow-lg' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white' }}">
+                {{ $cat->name }}
+            </button>
+        @endforeach
+    </div>
 
-                    <!-- Detalles -->
-                    <div class="p-6 flex flex-col flex-grow">
-                        <h3 class="text-lg font-bold text-white mb-2">{{ $producto->name }}</h3>
-                        <p class="text-gray-400 text-sm mb-4 flex-grow line-clamp-2">{{ $producto->description }}</p>
-                        
-                        <div class="mt-auto border-t border-white/10 pt-4">
-                            <div class="flex justify-between items-baseline mb-1">
-                                <span class="text-xl font-extrabold text-white">${{ number_format($producto->price, 2) }}</span>
-                                @if($producto->stock > 0)
-                                    <span class="text-xs text-green-400 font-semibold bg-green-400/10 px-2 py-1 rounded">En Stock</span>
-                                @else
-                                    <span class="text-xs text-red-400 font-semibold bg-red-400/10 px-2 py-1 rounded">Agotado</span>
-                                @endif
-                            </div>
-                            
-                            @if($tasaBcv > 0)
-                                <div class="text-xs text-gray-500 mb-4">
-                                    Bs. {{ number_format($producto->price * $tasaBcv, 2) }}
-                                </div>
-                            @endif
-
-                            <!-- ✅ BOTÓN CON .prevent PARA QUE NO RECARGUE LA PÁGINA NI NOS SAQUE DEL CATÁLOGO -->
-                            <button wire:click.prevent="addToCart({{ $producto->id }})" class="w-full bg-white/10 hover:bg-brand-purple text-white font-bold py-2 px-4 rounded-xl transition duration-200 {{ $producto->stock <= 0 ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $producto->stock <= 0 ? 'disabled' : '' }}>
-                                Añadir al Carrito
-                            </button>
-                        </div>
-                    </div>
+    {{-- Grilla de Productos --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        @forelse($productos as $producto)
+            <div wire:key="product-{{ $producto->id }}" class="bg-white/5 border border-white/10 rounded-2xl shadow-sm hover:border-brand-cyan/50 transition-colors duration-300 overflow-hidden flex flex-col group transform-gpu">
+                
+                <a href="{{ route('product.detail', $producto->id) }}" class="block aspect-square w-full bg-gray-800 relative overflow-hidden">
+                    @if($producto->image_path)
+                        <img src="{{ asset('storage/' . $producto->image_path) }}" alt="{{ $producto->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    @else
+                        <div class="flex items-center justify-center h-full text-gray-500">Sin imagen</div>
+                    @endif
+                    <span class="absolute top-3 left-3 bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-[10px] font-black uppercase px-2 py-1 rounded-md shadow">Nuevo</span>
+                    <span class="absolute top-3 right-3 bg-brand-dark/80 backdrop-blur text-brand-cyan text-[10px] font-bold px-2 py-1 rounded-full border border-white/10 uppercase">
+                        {{ $producto->category->name }}
+                    </span>
                 </a>
-            @endforeach
-        </div>
+
+                <div class="p-5 flex flex-col flex-grow">
+                    <a href="{{ route('product.detail', $producto->id) }}">
+                        <h3 class="text-lg font-bold text-white mb-2 hover:text-brand-cyan transition line-clamp-1">{{ $producto->name }}</h3>
+                    </a>
+                    <p class="text-gray-400 text-sm mb-4 flex-grow line-clamp-2">{{ $producto->description }}</p>
+                    
+                    <div class="mt-auto border-t border-white/10 pt-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-2xl font-extrabold text-white">${{ number_format($producto->price, 2) }}</span>
+                            @if($producto->stock > 0)
+                                <span class="text-[10px] text-green-400 font-bold bg-green-400/10 px-2 py-1 rounded uppercase">En Stock</span>
+                            @else
+                                <span class="text-[10px] text-red-400 font-bold bg-red-400/10 px-2 py-1 rounded uppercase">Agotado</span>
+                            @endif
+                        </div>
+                        <button wire:click.prevent="addToCart({{ $producto->id }})" 
+                                class="w-full bg-white/10 hover:bg-gradient-to-r hover:from-brand-purple hover:to-brand-cyan text-white font-bold py-2.5 rounded-xl transition-all duration-300 {{ $producto->stock <= 0 ? 'opacity-50 cursor-not-allowed' : '' }}" 
+                                {{ $producto->stock <= 0 ? 'disabled' : '' }}>
+                            Añadir al Carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="col-span-full text-center py-20 bg-white/5 rounded-2xl border border-white/10">
+                <svg class="w-20 h-20 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <h2 class="text-2xl font-bold text-white mb-2">No encontramos resultados</h2>
+                <p class="text-gray-400 mb-6">Intenta con otra búsqueda o categoría.</p>
+                <button wire:click="$set('search', ''); filterByCategory(null)" class="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg font-bold transition">
+                    Ver todo el catálogo
+                </button>
+            </div>
+        @endforelse
     </div>
 </div>

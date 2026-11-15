@@ -109,6 +109,25 @@ class StoreSettings extends Page implements HasForms
                             ->columnSpanFull(),
                     ]),
 
+
+                Section::make('Métodos de Envío')
+                    ->description('Configura cómo los clientes pueden recibir sus productos.')
+                    ->schema([
+                        Toggle::make('enable_pickup')->label('Habilitar Retiro en Tienda')->default(true),
+                        Toggle::make('enable_delivery')->label('Habilitar Delivery Local (Punta de Mata)')->default(true)->live(),
+                        TextInput::make('delivery_cost')
+                            ->label('Costo de Delivery ($)')
+                            ->numeric()
+                            ->default(0)
+                            ->visible(fn ($get) => $get('enable_delivery')),
+                        Toggle::make('enable_national_shipping')->label('Habilitar Envío Nacional')->default(false)->live(),
+                        TextInput::make('national_agencies')
+                            ->label('Agencias disponibles (separadas por coma)')
+                            ->placeholder('MRW, Zoom, Tealca')
+                            ->visible(fn ($get) => $get('enable_national_shipping')),
+                    ])->columns(2),
+
+                    
                 Section::make('Redes Sociales')
                     ->description('Enlaces que aparecerán en el pie de página de la tienda.')
                     ->schema([

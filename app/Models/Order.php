@@ -11,15 +11,21 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'customer_name',       // <--- NUEVO
-        'customer_id_number',  // <--- NUEVO
-        'customer_phone',      // <--- NUEVO
-        'customer_address',    // <--- NUEVO
+        'customer_name',
+        'customer_id_number',
+        'customer_phone',
+        'customer_address',
         'total',
         'status',
         'payment_receipt_path',
         'sale_type',
+        'shipping_method',
+        'shipping_details',
+        'shipping_cost',
+        'latitude',   // ✅ Nuevo
+        'longitude',  // ✅ Nuevo
     ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -21,7 +21,7 @@ class OrderResource extends Resource
 
     public static function form(Form $form): Form
     {
-        // El formulario ahora es solo para actualizar el estado en caso de edición
+        // El formulario es solo para actualizar el estado en caso de edición
         return $form
             ->schema([
                 Forms\Components\Select::make('status')
@@ -31,6 +31,7 @@ class OrderResource extends Resource
                         'pagado' => '✅ Pagado (Comprobante Validado)',
                         'en_produccion' => '🎨 En Producción (Diseñando)',
                         'entregado' => '📦 Entregado al Cliente',
+                        'cancelado' => '❌ Cancelado', // ✅ Nueva opción
                     ])
                     ->required(),
             ]);
@@ -61,10 +62,22 @@ class OrderResource extends Resource
                         'online' => 'info',
                         'fisica' => 'success',
                     }),
+                // ✅ Columna para el método de envío
+                Tables\Columns\TextColumn::make('shipping_method')
+                    ->label('Envío')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => match($state) {
+                        'retiro' => '🏪 Retiro',
+                        'delivery' => '🛵 Delivery',
+                        'nacional' => '🚚 Nacional',
+                        default => 'N/A'
+                    })
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('total')
                     ->label('Total ($)')
                     ->money('USD')
                     ->sortable(),
+                // ✅ CORRECCIÓN: Columna de estado correcta (no un formulario)
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Estado')
                     ->colors([
@@ -72,6 +85,7 @@ class OrderResource extends Resource
                         'success' => 'pagado',
                         'primary' => 'en_produccion',
                         'secondary' => 'entregado',
+                        'danger' => 'cancelado',
                     ]),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Fecha')
@@ -86,6 +100,7 @@ class OrderResource extends Resource
                         'pagado' => 'Pagados',
                         'en_produccion' => 'En Producción',
                         'entregado' => 'Entregados',
+                        'cancelado' => 'Cancelados', // ✅ Nuevo filtro
                     ]),
                 Tables\Filters\SelectFilter::make('sale_type')
                     ->label('Filtrar por Canal')
@@ -103,23 +118,20 @@ class OrderResource extends Resource
                     ->url(fn () => route('filament.admin.resources.orders.create', ['type' => 'fisica'])),
             ])
             ->actions([
-                // BOTÓN PARA IMPRIMIR FACTURA (AHORA CON TASA BCV)
+                // BOTÓN PARA IMPRIMIR FACTURA (CON TASA BCV)
                 Tables\Actions\Action::make('factura')
                     ->label('Factura')
                     ->icon('heroicon-o-printer')
                     ->color('gray')
                     ->action(function (Order $record) {
-                        // Buscamos la tasa BCV activa en la base de datos
                         $activeRate = \App\Models\ExchangeRate::getActiveRate();
                         $rate = $activeRate ? $activeRate->rate : 0;
                         
-                        // Cargamos la vista del PDF enviándole la orden y la tasa
                         $pdf = Pdf::loadView('reports.invoice-pdf', [
                             'order' => $record,
                             'rate' => $rate 
                         ]);
                         
-                        // Descargamos el PDF
                         return response()->streamDownload(function () use ($pdf) {
                             echo $pdf->stream();
                         }, 'Factura_SubliArte_' . $record->id . '.pdf');

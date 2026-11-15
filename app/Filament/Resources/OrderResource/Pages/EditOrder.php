@@ -12,7 +12,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Placeholder;
 use Filament\Notifications\Notification;
+use Illuminate\Support\HtmlString;
 
 class EditOrder extends EditRecord
 {
@@ -43,6 +45,12 @@ class EditOrder extends EditRecord
             'title' => '¡Pedido Actualizado!',
             'text' => 'El estado del pedido se ha modificado correctamente.'
         ]);
+
+        $order = $this->getRecord();
+        
+        if ($order->wasChanged('status') && $order->user_id) {
+            $order->user->notify(new \App\Notifications\OrderStatusUpdated($order, $order->status));
+        }
     }
 
     public function form(Form $form): Form
@@ -52,16 +60,14 @@ class EditOrder extends EditRecord
                 Section::make('Detalles del Cliente y Pago')
                     ->schema([
                         TextInput::make('customer_name')
-                            ->label('Cliente (Mostrador)')
+                            ->label('Cliente')
                             ->disabled()
-                            ->dehydrated(false)
-                            ->default(fn () => $this->getRecord()?->customer_name ?? $this->getRecord()?->user?->name),
+                            ->default(fn ($record) => $record?->customer_name ?? $record?->user?->name),
                             
-                        TextInput::make('total_pagar')
+                        TextInput::make('total')
                             ->label('Total a Pagar')
-                            ->disabled()
-                            ->dehydrated(false)
-                            ->default(fn () => '$ ' . number_format($this->getRecord()?->total ?? 0, 2)),
+                            ->prefix('$')
+                            ->disabled(),
                             
                         Select::make('status')
                             ->label('Estado del Pedido')
@@ -70,6 +76,7 @@ class EditOrder extends EditRecord
                                 'pagado' => '✅ Pagado (Comprobante Validado)',
                                 'en_produccion' => '🎨 En Producción (Diseñando)',
                                 'entregado' => '📦 Entregado al Cliente',
+                                'cancelado' => '❌ Cancelado',
                             ])
                             ->required(),
                     ])->columns(3),
@@ -79,33 +86,69 @@ class EditOrder extends EditRecord
                         Repeater::make('items')
                             ->relationship()
                             ->schema([
-                                TextInput::make('producto_display')
+                                Select::make('product_id')
+                                    ->relationship('product', 'name')
                                     ->label('Producto')
-                                    ->disabled()
-                                    ->dehydrated(false)
-                                    ->default(fn ($record) => $record?->product?->name . ' (x' . $record?->quantity . ')'),
-                            
-                                TextInput::make('price_display')
+                                    ->disabled(),
+                                
+                                TextInput::make('price')
                                     ->label('Precio Unitario')
-                                    ->disabled()
-                                    ->dehydrated(false)
-                                    ->default(fn ($record) => '$ ' . number_format($record?->price ?? 0, 2)),
-                            
+                                    ->prefix('$')
+                                    ->disabled(),
+                                    
+                                TextInput::make('quantity')
+                                    ->label('Cantidad')
+                                    ->disabled(),
+                                    
                                 FileUpload::make('customization_file_path')
                                     ->label('Diseño a Sublimar')
                                     ->image()
                                     ->disk('public')
                                     ->directory('disenos')
+                                    ->openable()
+                                    ->downloadable()
                                     ->disabled(),
-                            
+                                    
                                 Textarea::make('customization_notes')
                                     ->label('Notas del Cliente')
-                                    ->disabled(),
+                                    ->disabled()
+                                    ->columnSpanFull(),
                             ])
-                            ->columns(2)
+                            ->columns(3)
                             ->addable(false)
                             ->deletable(false),
                     ]),
+
+                // ✅ Sección corregida: Ubicación de Entrega
+                Section::make('Ubicación de Entrega (Solo Delivery)')
+                    ->schema([
+                        Placeholder::make('mapa')
+                            ->label('Mapa de Entrega')
+                            ->content(function ($record) {
+                                if (!$record || !$record->latitude || !$record->longitude) {
+                                    return 'Este pedido no tiene coordenadas de delivery.';
+                                }
+                                
+                                $lat = $record->latitude;
+                                $lng = $record->longitude;
+                                
+                                return new HtmlString("
+                                    <div style='width: 100%; height: 300px; border-radius: 12px; overflow: hidden; border: 1px solid #374151;'>
+                                        <iframe 
+                                            width='100%' 
+                                            height='100%' 
+                                            frameborder='0' 
+                                            style='border:0' 
+                                            src='https://www.google.com/maps?q={$lat},{$lng}&hl=es&z=16&output=embed' 
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                    <p style='color: #9ca3af; font-size: 13px; margin-top: 8px;'>Coordenadas: {$lat}, {$lng}</p>
+                                    <a href='https://www.google.com/maps?q={$lat},{$lng}' target='_blank' style='color: #06b6d4; font-size: 13px; text-decoration: underline;'>Abrir en Google Maps</a>
+                                ");
+                            }),
+                    ])
+                    ->visible(fn ($record) => $record && $record->shipping_method === 'delivery'),
             ]);
     }
 }

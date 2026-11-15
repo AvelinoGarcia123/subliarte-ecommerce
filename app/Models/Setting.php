@@ -10,13 +10,18 @@ class Setting extends Model
     use HasFactory;
 
     protected $fillable = [
-        'pm_banco',
-        'pm_telefono',
-        'pm_cedula_rif',
-        'whatsapp',
-        'instagram',
-        'facebook',
+        'pm_banco', 
+        'pm_telefono', 
+        'pm_cedula_rif', 
+        'whatsapp', 
+        'instagram', 
+        'facebook', 
         'promociones',
+        'enable_pickup', 
+        'enable_delivery', 
+        'delivery_cost', 
+        'enable_national_shipping', 
+        'national_agencies', // <-- Nuevos
     ];
 
     // ✅ RELACIÓN: Una configuración puede tener muchas cuentas bancarias

@@ -19,19 +19,33 @@ class CheckoutPage extends Component
     public $tasaBcv = 0;
     public $totalUsd = 0;
     public $setting;
+    public $settings;
 
-    // Campos del formulario
+    // Envío
+    public $shipping_method = 'retiro';
+    public $shipping_cost = 0;
+    
+    // Datos del Cliente
     public $customer_phone = '';
     public $customer_address = '';
-    public $payment_receipt; // Archivo del comprobante
-    public $customization_file; // Archivo del diseño
-    public $customization_notes = ''; // Instrucciones extra
+    
+    // Delivery Local (Mapa)
+    public $latitude = null;
+    public $longitude = null;
+
+    // Envío Nacional
+    public $national_agency = '';
+    public $national_destination = '';
+
+    // Archivos
+    public $payment_receipt; 
+    public $customization_file; 
+    public $customization_notes = ''; 
 
     public function mount()
     {
         $this->cart = session()->get('cart', []);
         
-        // Si el carrito está vacío, redirigir al catálogo
         if (empty($this->cart)) {
             return redirect()->route('home');
         }
@@ -39,40 +53,77 @@ class CheckoutPage extends Component
         $activeRate = ExchangeRate::getActiveRate();
         $this->tasaBcv = $activeRate ? $activeRate->rate : 0;
         $this->setting = Setting::first();
+        $this->settings = Setting::first();
 
-        // Calcular total
         $this->totalUsd = collect($this->cart)->sum(function($item) {
             return $item['price'] * $item['quantity'];
         });
     }
 
+    public function updatedShippingMethod($value)
+    {
+        // Reseteamos campos al cambiar de método
+        $this->shipping_cost = 0;
+        $this->latitude = null;
+        $this->longitude = null;
+        $this->customer_address = '';
+        $this->national_agency = '';
+        $this->national_destination = '';
+
+        if ($value === 'delivery' && $this->settings) {
+            $this->shipping_cost = $this->settings->delivery_cost;
+        }
+    }
+
     public function placeOrder()
     {
-        // Validaciones
-        $this->validate([
+        // Validaciones condicionales
+        $rules = [
             'customer_phone' => 'required|string',
-            'customer_address' => 'required|string',
-            'payment_receipt' => 'required|image|max:5120', // Max 5MB
-            'customization_file' => 'nullable|image|max:5120', // Opcional por si no suben diseño
-        ]);
+            'payment_receipt' => 'required|image|max:5120',
+            'customization_file' => 'required|image|max:5120',
+            'shipping_method' => 'required|string',
+        ];
 
-        // 1. Crear la Orden en la Base de Datos
+        if ($this->shipping_method === 'delivery') {
+            $rules['customer_address'] = 'required|string';
+            $rules['latitude'] = 'required';
+            $rules['longitude'] = 'required';
+        } elseif ($this->shipping_method === 'nacional') {
+            $rules['national_agency'] = 'required|string';
+            $rules['national_destination'] = 'required|string';
+        }
+
+        $this->validate($rules);
+
+        $totalFinal = $this->totalUsd + $this->shipping_cost;
+
+        // Preparamos los detalles de envío
+        $shipping_details = '';
+        if ($this->shipping_method === 'delivery') {
+            $shipping_details = "Dirección: {$this->customer_address} | Coordenadas: {$this->latitude}, {$this->longitude}";
+        } elseif ($this->shipping_method === 'nacional') {
+            $shipping_details = "Agencia: {$this->national_agency} | Destino: {$this->national_destination}";
+        }
+
         $order = Order::create([
             'user_id' => Auth::id(),
-            'customer_name' => Auth::user()->name, // Tomamos el nombre del usuario logueado
+            'customer_name' => Auth::user()->name, 
             'customer_phone' => $this->customer_phone,
-            'customer_address' => $this->customer_address,
-            'total' => $this->totalUsd,
+            'customer_address' => $this->customer_address, // Se llena si es delivery
+            'total' => $totalFinal,
             'status' => 'pendiente',
-            'sale_type' => 'online', // ¡Clave para que salga la notificación en el admin!
+            'sale_type' => 'online', 
             'payment_receipt_path' => $this->payment_receipt->store('comprobantes', 'public'),
+            'shipping_method' => $this->shipping_method,
+            'shipping_details' => $shipping_details,
+            'shipping_cost' => $this->shipping_cost,
+            'latitude' => $this->latitude,   // ✅ Nuevo
+            'longitude' => $this->longitude, // ✅ Nuevo
         ]);
 
-        // 2. Guardar los productos y los diseños
         foreach ($this->cart as $id => $details) {
             $customFilePath = null;
-            
-            // Si subió un diseño, lo guardamos
             if ($this->customization_file) {
                 $customFilePath = $this->customization_file->store('disenos', 'public');
             }
@@ -86,23 +137,41 @@ class CheckoutPage extends Component
                 'customization_notes' => $this->customization_notes,
             ]);
 
-            // 3. Descontar el stock (Inventario)
             $product = Product::find($id);
             if ($product) {
                 $product->decrement('stock', $details['quantity']);
             }
         }
 
-        // 4. Vaciar el carrito
         session()->forget('cart');
 
-        // 5. Redirigir a una página de éxito o a "Mis Pedidos"
-        session()->flash('success', '¡Tu pedido ha sido enviado! Pronto validaremos tu pago.');
-        return redirect()->route('home'); 
+        // Notificar al admin
+        $admins = \App\Models\User::where('role', 'admin')->get();
+        if ($admins->count() > 0) {
+            foreach ($admins as $admin) {
+                $admin->notify(
+                    \Filament\Notifications\Notification::make()
+                        ->title('¡Nuevo Pedido Online!')
+                        ->body("Pedido #{$order->id} de {$order->customer_name} por \${$order->total}.")
+                        ->toDatabase()
+                );
+            }
+        }
+
+        session()->flash('success', '¡Tu pedido ha sido enviado con éxito! Pronto validaremos tu pago.');
+        return redirect()->route('my-orders'); 
     }
 
     public function render()
     {
-        return view('livewire.checkout-page')->layout('components.layouts.app');
+        // Procesamos las agencias nacionales
+        $agencias = [];
+        if ($this->settings && $this->settings->national_agencies) {
+            $agencias = array_map('trim', explode(',', $this->settings->national_agencies));
+        }
+
+        return view('livewire.checkout-page', [
+            'agencias' => $agencias
+        ])->layout('components.layouts.app');
     }
 }
