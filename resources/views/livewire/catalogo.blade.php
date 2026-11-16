@@ -60,14 +60,18 @@
     {{-- Grilla de Productos --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         @forelse($productos as $producto)
-            <div wire:key="product-{{ $producto->id }}" class="bg-white/5 border border-white/10 rounded-2xl shadow-sm hover:border-brand-cyan/50 transition-colors duration-300 overflow-hidden flex flex-col group transform-gpu">
+                <div wire:key="product-{{ $producto->id }}" class="bg-white/5 border border-white/10 rounded-2xl shadow-sm hover:shadow-2xl hover:shadow-brand-cyan/20 hover:border-brand-cyan/50 transition-all duration-500 overflow-hidden flex flex-col group transform hover:-translate-y-2">
                 
                 <a href="{{ route('product.detail', $producto->id) }}" class="block aspect-square w-full bg-gray-800 relative overflow-hidden">
                     @if($producto->image_path)
-                        <img src="{{ asset('storage/' . $producto->image_path) }}" alt="{{ $producto->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <img src="{{ asset('storage/' . $producto->image_path) }}" alt="{{ $producto->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     @else
                         <div class="flex items-center justify-center h-full text-gray-500">Sin imagen</div>
                     @endif
+                    
+                    {{-- Efecto de brillo en hover --}}
+                    <div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 transform -translate-x-full group-hover:translate-x-full"></div>
+
                     <span class="absolute top-3 left-3 bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-[10px] font-black uppercase px-2 py-1 rounded-md shadow">Nuevo</span>
                     <span class="absolute top-3 right-3 bg-brand-dark/80 backdrop-blur text-brand-cyan text-[10px] font-bold px-2 py-1 rounded-full border border-white/10 uppercase">
                         {{ $producto->category->name }}
@@ -90,7 +94,7 @@
                             @endif
                         </div>
                         <button wire:click.prevent="addToCart({{ $producto->id }})" 
-                                class="w-full bg-white/10 hover:bg-gradient-to-r hover:from-brand-purple hover:to-brand-cyan text-white font-bold py-2.5 rounded-xl transition-all duration-300 {{ $producto->stock <= 0 ? 'opacity-50 cursor-not-allowed' : '' }}" 
+                                class="w-full bg-white/10 hover:bg-gradient-to-r hover:from-brand-purple hover:to-brand-cyan text-white font-bold py-2.5 rounded-xl transition-all duration-300 transform hover:scale-105 {{ $producto->stock <= 0 ? 'opacity-50 cursor-not-allowed' : '' }}" 
                                 {{ $producto->stock <= 0 ? 'disabled' : '' }}>
                             Añadir al Carrito
                         </button>

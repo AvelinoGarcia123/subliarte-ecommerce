@@ -1,10 +1,10 @@
 <div class="relative" wire:poll.10s="loadNotifications">
     <!-- Botón de la Campanita -->
-    <button wire:click="toggle" class="relative p-2 text-gray-400 hover:text-white transition group">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+    <button wire:click="toggle" class="relative p-2.5 text-gray-400 hover:text-brand-cyan bg-transparent hover:bg-white/10 rounded-full transition-all duration-200 group">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
         
         @if($unreadCount > 0)
-            <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full group-hover:scale-110 transition">
+            <span class="absolute top-1 right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full group-hover:scale-110 transition">
                 {{ $unreadCount }}
             </span>
         @endif
@@ -20,7 +20,8 @@
                 @endif
             </div>
 
-            <div class="max-h-96 overflow-y-auto">
+            <!-- ✅ AQUÍ APLICAMOS LA CLASE custom-scrollbar -->
+            <div class="max-h-96 overflow-y-auto custom-scrollbar">
                 @forelse($notifications as $notif)
                     <div class="p-4 border-b border-white/5 hover:bg-white/5 transition {{ $notif->read_at ? 'opacity-60' : 'bg-brand-dark/50' }}">
                         <div class="flex items-start gap-3">

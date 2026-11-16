@@ -3,15 +3,16 @@
     <div class="relative bg-brand-darker bg-grid-pattern border-b border-white/5 overflow-hidden">
         {{-- Brillos flotantes animados --}}
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute top-20 left-1/4 w-96 h-96 bg-brand-purple/20 rounded-full blur-3xl animate-float"></div>
-            <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-brand-cyan/20 rounded-full blur-3xl animate-float" style="animation-delay: -3s"></div>
+            <div class="absolute top-20 left-1/4 w-96 h-96 bg-brand-purple/30 rounded-full blur-3xl animate-float"></div>
+            <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-brand-cyan/30 rounded-full blur-3xl animate-float-slow" style="animation-delay: -3s"></div>
+            <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-spin-slow" style="animation-duration: 20s;"></div>
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 
                 {{-- Texto Izquierda --}}
-                <div>
+                <div class="animate-fade-in-up">
                     <div class="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-white/5 border border-white/10 text-brand-cyan text-xs font-bold mb-8">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-cyan opacity-75"></span>
@@ -30,11 +31,12 @@
                     </p>
 
                     <div class="flex flex-wrap gap-4">
-                        <a href="{{ route('catalogo') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-brand-purple to-brand-cyan hover:shadow-2xl hover:shadow-brand-cyan/30 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105">
+                        {{-- Botón con efecto Shimmer --}}
+                        <a href="{{ route('catalogo') }}" class="shimmer-btn inline-flex items-center gap-2 font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-xl shadow-brand-purple/20">
                             Ver Catálogo
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            <svg class="w-5 h-5 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </a>
-                        <a href="{{ route('home') }}#como-funciona" class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300">
+                        <a href="#como-funciona" class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300">
                             Cómo funciona
                         </a>
                     </div>
@@ -72,14 +74,14 @@
                 </div>
 
                 {{-- Visual Derecha --}}
-                <div class="relative">
-                    <div class="absolute -inset-4 bg-gradient-to-r from-brand-purple to-brand-cyan opacity-20 blur-3xl"></div>
+                <div class="relative animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="absolute -inset-4 bg-gradient-to-r from-brand-purple to-brand-cyan opacity-30 blur-3xl animate-pulse-slow"></div>
                     <div class="relative bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-md">
                         <div class="grid grid-cols-2 gap-4">
-                            @foreach($destacados->take(4) as $producto)
-                                <a href="{{ route('product.detail', $producto->id) }}" class="relative aspect-square rounded-2xl overflow-hidden bg-gray-800 group">
+                            @foreach($destacados->take(4) as $index => $producto)
+                                <a href="{{ route('product.detail', $producto->id) }}" class="relative aspect-square rounded-2xl overflow-hidden bg-gray-800 group {{ $index % 2 == 0 ? 'animate-float' : 'animate-float-slow' }}" style="animation-delay: {{ $index * 0.5 }}s;">
                                     @if($producto->image_path)
-                                        <img src="{{ asset('storage/' . $producto->image_path) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                        <img src="{{ asset('storage/' . $producto->image_path) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                                     @endif
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                                     <div class="absolute bottom-2 left-2 right-2">
@@ -102,20 +104,20 @@
                     <h2 class="text-4xl font-extrabold text-white mb-3">Explora por Categorías</h2>
                     <p class="text-gray-400">Encuentra el producto perfecto para tu próximo diseño.</p>
                 </div>
-                <a href="{{ route('catalogo') }}" class="hidden md:inline-flex items-center gap-2 text-brand-cyan hover:text-white font-bold transition">
-                    Ver todo <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                <a href="{{ route('catalogo') }}" class="hidden md:inline-flex items-center gap-2 text-brand-cyan hover:text-white font-bold transition group">
+                    Ver todo <svg class="w-4 h-4 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                 </a>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @forelse($categorias as $categoria)
-                    <a href="{{ route('catalogo', ['category' => $categoria->id]) }}" class="group relative bg-white/5 border border-white/10 rounded-2xl p-8 text-center hover:bg-white/10 hover:border-brand-cyan/50 transition-all duration-300 overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brand-purple/0 to-brand-cyan/0 group-hover:from-brand-purple/10 group-hover:to-brand-cyan/10 transition-all"></div>
+                    <a href="{{ route('catalogo', ['category' => $categoria->id]) }}" class="group relative bg-white/5 border border-white/10 rounded-2xl p-8 text-center hover:bg-white/10 hover:border-brand-cyan/50 transition-all duration-500 overflow-hidden transform hover:-translate-y-2">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand-purple/0 to-brand-cyan/0 group-hover:from-brand-purple/10 group-hover:to-brand-cyan/10 transition-all duration-500"></div>
                         <div class="relative">
-                            <div class="w-16 h-16 mx-auto bg-gradient-to-tr from-brand-purple/20 to-brand-cyan/20 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                            <div class="w-16 h-16 mx-auto bg-gradient-to-tr from-brand-purple/20 to-brand-cyan/20 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
                                 <svg class="w-8 h-8 text-brand-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                             </div>
-                            <h3 class="text-xl font-extrabold text-white mb-1 capitalize">{{ $categoria->name }}</h3>
+                            <h3 class="text-xl font-extrabold text-white mb-1 capitalize group-hover:text-brand-cyan transition-colors">{{ $categoria->name }}</h3>
                             <p class="text-sm text-gray-400">{{ $categoria->products_count }} productos</p>
                         </div>
                     </a>
@@ -132,25 +134,27 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-end mb-12">
                 <div>
-                    <div class="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-brand-cyan/10 text-brand-cyan text-xs font-bold mb-3">
+                    <div class="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-brand-cyan/10 text-brand-cyan text-xs font-bold mb-3 animate-pulse">
                         ✨ Novedades
                     </div>
                     <h2 class="text-4xl font-extrabold text-white mb-3">Lo más nuevo</h2>
                     <p class="text-gray-400">Los últimos productos que agregamos a nuestra tienda.</p>
                 </div>
-                <a href="{{ route('catalogo') }}" class="hidden md:inline-flex items-center gap-2 text-brand-cyan hover:text-white font-bold transition">
-                    Ver todo <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                <a href="{{ route('catalogo') }}" class="hidden md:inline-flex items-center gap-2 text-brand-cyan hover:text-white font-bold transition group">
+                    Ver todo <svg class="w-4 h-4 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                 </a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach($destacados as $producto)
-                    <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden flex flex-col group hover:border-brand-cyan/50 transition-colors duration-300">
+                    <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden flex flex-col group hover:border-brand-cyan/50 hover:shadow-2xl hover:shadow-brand-cyan/20 transition-all duration-500 transform hover:-translate-y-2">
                         <a href="{{ route('product.detail', $producto->id) }}" class="block aspect-square bg-gray-800 relative overflow-hidden">
                             @if($producto->image_path)
                                 <img src="{{ asset('storage/' . $producto->image_path) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                             @endif
                             <div class="absolute top-3 left-3 bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-[10px] font-black uppercase px-2 py-1 rounded-md shadow-lg">Nuevo</div>
+                            {{-- Efecto de brillo --}}
+                            <div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 transform -translate-x-full group-hover:translate-x-full"></div>
                         </a>
                         <div class="p-5 flex flex-col flex-grow">
                             <span class="text-[10px] uppercase tracking-wider text-brand-cyan font-bold mb-1">{{ $producto->category->name }}</span>
@@ -159,7 +163,7 @@
                             </a>
                             <div class="mt-auto flex justify-between items-center">
                                 <span class="text-lg font-extrabold text-white">${{ number_format($producto->price, 2) }}</span>
-                                <a href="{{ route('product.detail', $producto->id) }}" class="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-cyan text-white flex items-center justify-center transition">
+                                <a href="{{ route('product.detail', $producto->id) }}" class="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-cyan hover:text-white text-white flex items-center justify-center transition-all duration-300 group-hover:translate-x-1">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                 </a>
                             </div>
@@ -180,38 +184,38 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Paso 1 -->
-                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl relative group hover:border-brand-cyan/50 hover:bg-white/10 transition duration-300">
-                    <div class="w-14 h-14 bg-gradient-to-tr from-brand-cyan/20 to-brand-cyan/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl relative group hover:border-brand-cyan/50 hover:bg-white/10 hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-14 h-14 bg-gradient-to-tr from-brand-cyan/20 to-brand-cyan/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <svg class="w-7 h-7 text-brand-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     </div>
-                    <div class="absolute top-6 right-6 text-5xl font-black text-white/5 group-hover:text-brand-cyan/10 transition">1</div>
+                    <div class="absolute top-6 right-6 text-5xl font-black text-white/5 group-hover:text-brand-cyan/20 transition-colors duration-300">1</div>
                     <h3 class="text-lg font-bold text-white mb-2">Elige tu producto</h3>
                     <p class="text-sm text-gray-400">Explora nuestro catálogo y selecciona lo que más te guste.</p>
                 </div>
                 <!-- Paso 2 -->
-                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl relative group hover:border-brand-cyan/50 hover:bg-white/10 transition duration-300">
-                    <div class="w-14 h-14 bg-gradient-to-tr from-brand-purple/20 to-brand-purple/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl relative group hover:border-brand-cyan/50 hover:bg-white/10 hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-14 h-14 bg-gradient-to-tr from-brand-purple/20 to-brand-purple/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <svg class="w-7 h-7 text-brand-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     </div>
-                    <div class="absolute top-6 right-6 text-5xl font-black text-white/5 group-hover:text-brand-purple/10 transition">2</div>
+                    <div class="absolute top-6 right-6 text-5xl font-black text-white/5 group-hover:text-brand-purple/20 transition-colors duration-300">2</div>
                     <h3 class="text-lg font-bold text-white mb-2">Sube tu diseño</h3>
                     <p class="text-sm text-gray-400">Carga la imagen que quieres sublimar en tu producto.</p>
                 </div>
                 <!-- Paso 3 -->
-                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl relative group hover:border-brand-cyan/50 hover:bg-white/10 transition duration-300">
-                    <div class="w-14 h-14 bg-gradient-to-tr from-green-500/20 to-green-500/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl relative group hover:border-brand-cyan/50 hover:bg-white/10 hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-14 h-14 bg-gradient-to-tr from-green-500/20 to-green-500/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <svg class="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     </div>
-                    <div class="absolute top-6 right-6 text-5xl font-black text-white/5 group-hover:text-green-500/10 transition">3</div>
+                    <div class="absolute top-6 right-6 text-5xl font-black text-white/5 group-hover:text-green-500/20 transition-colors duration-300">3</div>
                     <h3 class="text-lg font-bold text-white mb-2">Paga fácil</h3>
                     <p class="text-sm text-gray-400">Por Pago Móvil o transferencia. Sube tu comprobante.</p>
                 </div>
                 <!-- Paso 4 -->
-                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl relative group hover:border-brand-cyan/50 hover:bg-white/10 transition duration-300">
-                    <div class="w-14 h-14 bg-gradient-to-tr from-yellow-500/20 to-yellow-500/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl relative group hover:border-brand-cyan/50 hover:bg-white/10 hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-14 h-14 bg-gradient-to-tr from-yellow-500/20 to-yellow-500/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <svg class="w-7 h-7 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                     </div>
-                    <div class="absolute top-6 right-6 text-5xl font-black text-white/5 group-hover:text-yellow-500/10 transition">4</div>
+                    <div class="absolute top-6 right-6 text-5xl font-black text-white/5 group-hover:text-yellow-500/20 transition-colors duration-300">4</div>
                     <h3 class="text-lg font-bold text-white mb-2">Recibe tu arte</h3>
                     <p class="text-sm text-gray-400">Retiro en tienda, delivery o envío nacional.</p>
                 </div>
@@ -226,9 +230,9 @@
             <div class="relative z-10">
                 <h2 class="text-4xl md:text-5xl font-black text-white mb-4">¿Listo para crear algo único?</h2>
                 <p class="text-white/80 text-lg mb-8 max-w-2xl mx-auto">Explora nuestro catálogo y empieza a diseñar tu próxima obra de arte.</p>
-                <a href="{{ route('catalogo') }}" class="inline-flex items-center gap-2 bg-white text-brand-dark font-bold py-4 px-10 rounded-xl hover:bg-gray-100 transition shadow-xl transform hover:scale-105">
+                <a href="{{ route('catalogo') }}" class="inline-flex items-center gap-2 bg-white text-brand-dark font-bold py-4 px-10 rounded-xl hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl group">
                     Ir al Catálogo
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    <svg class="w-5 h-5 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                 </a>
             </div>
         </div>
