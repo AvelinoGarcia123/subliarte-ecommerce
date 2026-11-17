@@ -8,9 +8,9 @@ use Carbon\Carbon;
 
 class SalesChart extends ChartWidget
 {
-    protected static ?string $heading = 'Ventas de los Últimos 7 Días';
-    protected static ?int $sort = 2;
-    protected int | string | array $columnSpan = 'full'; 
+    protected static ?string $heading = 'Ingresos de los Últimos 7 Días';
+    protected static ?int $sort = 3;
+    protected int | string | array $columnSpan = 'full';
 
     protected function getData(): array
     {
@@ -19,7 +19,7 @@ class SalesChart extends ChartWidget
 
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
-            $labels[] = $date->format('d/m'); 
+            $labels[] = $date->isoFormat('ddd D'); 
             
             $total = Order::whereDate('created_at', $date)->sum('total');
             $data[] = $total;
@@ -30,10 +30,14 @@ class SalesChart extends ChartWidget
                 [
                     'label' => 'Ventas ($)',
                     'data' => $data,
-                    'backgroundColor' => 'rgba(79, 70, 229, 0.2)',
-                    'borderColor' => '#4f46e5',
-                    'borderWidth' => 2,
+                    'backgroundColor' => 'rgba(6, 182, 212, 0.1)',
+                    'borderColor' => '#8b5cf6',
+                    'borderWidth' => 3,
                     'fill' => true,
+                    'tension' => 0.4,
+                    'pointBackgroundColor' => '#06b6d4',
+                    'pointBorderColor' => '#fff',
+                    'pointRadius' => 4,
                 ],
             ],
             'labels' => $labels,
@@ -42,6 +46,6 @@ class SalesChart extends ChartWidget
 
     protected function getType(): string
     {
-        return 'line'; 
+        return 'line';
     }
 }

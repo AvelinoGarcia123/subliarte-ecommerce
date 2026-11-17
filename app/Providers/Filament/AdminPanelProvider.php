@@ -19,8 +19,6 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
-
-// ✅ IMPORTANTE: Clases para las notificaciones nativas (si las usas)
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
@@ -29,7 +27,6 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        // ✅ FORZAR LA POSICIÓN CENTRAL DE LAS NOTIFICACIONES NATIVAS
         Notifications::alignment(Alignment::Center);
         Notifications::verticalAlignment(VerticalAlignment::Center);
 
@@ -46,24 +43,17 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->databaseNotifications()
             ->databaseNotificationsPolling('10s')
-            
-            // ✅ CHAT WIDGET EN LA BARRA SUPERIOR
             ->renderHook(
                 PanelsRenderHook::USER_MENU_BEFORE,
                 fn (): string => Blade::render('@livewire(\'chat-widget\')'),
             )
-            
-
-            
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-            ])
+            // ✅ QUITAMOS EL ACCOUNT WIDGET POR DEFECTO
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
